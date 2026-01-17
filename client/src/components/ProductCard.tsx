@@ -1,13 +1,27 @@
 import { motion } from "framer-motion";
 import { type Product } from "@shared/schema";
-import { ShoppingBag, Star } from "lucide-react";
+import { ShoppingBag, Star, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/context/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { addItem } = useCart();
+  const { toast } = useToast();
+
+  const handleAddToCart = () => {
+    addItem(product);
+    toast({
+      title: "تم إضافة المنتج",
+      description: `${product.name} تمت إضافته إلى السلة`,
+      duration: 2000,
+    });
+  };
+
   return (
     <motion.div
       whileHover={{ y: -8 }}
@@ -47,8 +61,13 @@ export function ProductCard({ product }: ProductCardProps) {
               {(product.price / 100).toFixed(2)} د.أ
             </span>
           </div>
-          <Button size="icon" className="rounded-full shadow-md bg-primary hover:bg-primary/90">
-            <ShoppingBag className="w-5 h-5" />
+          <Button 
+            size="icon" 
+            className="rounded-full shadow-md bg-primary hover:bg-primary/90"
+            onClick={handleAddToCart}
+            data-testid={`button-add-to-cart-${product.id}`}
+          >
+            <Plus className="w-5 h-5" />
           </Button>
         </div>
       </div>
