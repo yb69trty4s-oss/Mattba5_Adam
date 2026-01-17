@@ -36,7 +36,7 @@ export function Navigation() {
                 <span className="font-display text-xl font-bold">ك</span>
               </div>
               <span className={`font-display text-2xl font-bold transition-colors duration-300 ${scrolled ? "text-foreground" : "text-white"}`}>
-                كبة الدار
+                مطبخ آدم
               </span>
             </div>
           </Link>

@@ -78,17 +78,41 @@ async function seedDatabase() {
       },
       { 
         categoryId: catMap.get("appetizers"), 
-        name: "سمبوسة", 
-        description: "سمبوسة هشة بحشوة الجبن أو اللحم", 
-        price: 300, 
+        name: "رقايق جبنة", 
+        description: "رقايق مقرمشة محشوة بالجبنة", 
+        price: 450, 
         image: "/images/hero1.png",
         isPopular: true
       },
       { 
         categoryId: catMap.get("appetizers"), 
-        name: "ورق عنب", 
-        description: "ورق عنب بخلطة الأرز والليمون المميزة", 
-        price: 600, 
+        name: "رقايق جبنة و سجق", 
+        description: "رقايق مقرمشة محشوة بالجبنة والسجق", 
+        price: 500, 
+        image: "/images/hero1.png",
+        isPopular: true
+      },
+      { 
+        categoryId: catMap.get("appetizers"), 
+        name: "سمبوسك لحمة", 
+        description: "سمبوسك محشوة باللحم", 
+        price: 550, 
+        image: "/images/hero1.png",
+        isPopular: true
+      },
+      { 
+        categoryId: catMap.get("appetizers"), 
+        name: "سمبوسك جبنة", 
+        description: "سمبوسك محشوة بالجبنة", 
+        price: 450, 
+        image: "/images/hero1.png",
+        isPopular: true
+      },
+      { 
+        categoryId: catMap.get("appetizers"), 
+        name: "ورق عنب بزيت", 
+        description: "ورق عنب بالزيت والليمون", 
+        price: 1000, 
         image: "/images/hero2.png",
         isPopular: true
       },
@@ -97,24 +121,31 @@ async function seedDatabase() {
         categoryId: catMap.get("main-dishes"), 
         name: "كبة مشوية", 
         description: "كبة مشوية على الفحم بنكهة الشواء الأصيلة", 
-        price: 1200, 
+        price: 750, 
         image: "/images/hero1.png",
         isPopular: true
       },
       { 
         categoryId: catMap.get("main-dishes"), 
-        name: "منسف أردني", 
-        description: "منسف باللحم البلدي والجميد الكركي", 
-        price: 2500, 
+        name: "ششبرك لحمة", 
+        description: "ششبرك باللحم واللبن", 
+        price: 500, 
         image: "/images/hero2.png",
-        isPopular: false
+        isPopular: true
       },
-      // Desserts
       { 
-        categoryId: catMap.get("desserts"), 
-        name: "كنافة نابلسية", 
-        description: "كنافة بالجبنة الساخنة والقطر", 
-        price: 800, 
+        categoryId: catMap.get("main-dishes"), 
+        name: "ورق عنب بلحمة", 
+        description: "ورق عنب مطهو مع اللحم", 
+        price: 1300, 
+        image: "/images/hero2.png",
+        isPopular: true
+      },
+      { 
+        categoryId: catMap.get("main-dishes"), 
+        name: "كبة قراص", 
+        description: "أقراص كبة مميزة", 
+        price: 500, 
         image: "/images/hero1.png",
         isPopular: true
       },

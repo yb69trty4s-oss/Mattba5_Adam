@@ -10,7 +10,7 @@ export function Footer() {
               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground">
                 <span className="font-display text-2xl font-bold">ك</span>
               </div>
-              <span className="font-display text-3xl font-bold text-white">كبة الدار</span>
+              <span className="font-display text-3xl font-bold text-white">مطبخ آدم</span>
             </div>
             <p className="text-white/60 leading-relaxed max-w-xs">
               نقدم لكم أشهى المأكولات الشرقية المحضرة بكل حب وعناية، لننقل لكم طعم الأصالة في كل لقمة.
@@ -32,15 +32,15 @@ export function Footer() {
             <ul className="space-y-4 text-white/70">
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary" />
-                <span dir="ltr">+962 79 123 4567</span>
+                <span dir="ltr">+961 81 984 634</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary" />
-                <span>info@kibbeh-house.com</span>
+                <span>info@adam-kitchen.com</span>
               </li>
               <li className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-primary" />
-                <span>عمان، الأردن</span>
+                <span>بيروت، لبنان</span>
               </li>
             </ul>
           </div>
@@ -48,11 +48,11 @@ export function Footer() {
           <div>
             <h4 className="text-xl font-bold mb-6 text-white font-display">تابعنا</h4>
             <div className="flex gap-4">
-              <a href="#" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300">
-                <Instagram className="w-6 h-6" />
+              <a href="https://wa.me/96181984634" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300">
+                <Phone className="w-6 h-6" />
               </a>
               <a href="#" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300">
-                <Facebook className="w-6 h-6" />
+                <Instagram className="w-6 h-6" />
               </a>
             </div>
           </div>
@@ -60,7 +60,7 @@ export function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-center md:justify-between items-center gap-4 text-center md:text-right">
           <p className="text-white/40 text-sm">
-            © 2024 كبة الدار. جميع الحقوق محفوظة.
+            © 2024 مطبخ آدم. جميع الحقوق محفوظة.
           </p>
           <p className="text-white/40 text-sm flex items-center gap-1">
             صمم بكل حب <span className="text-red-500">♥</span> للأكل الشرقي

@@ -94,8 +94,8 @@ export default function Contact() {
                     <Phone className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold mb-1">رقم الهاتف</h4>
-                    <p className="text-muted-foreground" dir="ltr">+962 79 123 4567</p>
+                    <h4 className="font-bold mb-1">رقم الهاتف (WhatsApp)</h4>
+                    <p className="text-muted-foreground" dir="ltr">+961 81 984 634</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
@@ -104,7 +104,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="font-bold mb-1">البريد الإلكتروني</h4>
-                    <p className="text-muted-foreground">info@kibbeh-house.com</p>
+                    <p className="text-muted-foreground">info@adam-kitchen.com</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
@@ -113,7 +113,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="font-bold mb-1">الموقع</h4>
-                    <p className="text-muted-foreground">شارع مكة، مجمع الحسيني، عمان، الأردن</p>
+                    <p className="text-muted-foreground">بيروت، لبنان</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
