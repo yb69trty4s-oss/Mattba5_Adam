@@ -73,7 +73,7 @@ async function seedDatabase() {
         name: "كبة مقلية", 
         description: "كبة محشوة باللحم والصنوبر مقلية ومقرمشة", 
         price: 500, // 5.00
-        image: "/attached_assets/generated_images/plate_of_crispy_fried_kibbeh_balls.png",
+        image: "/attached_assets/generated_images/fried_kibbeh_balls_with_meat_filling.png",
         isPopular: true
       },
       { 
@@ -81,7 +81,7 @@ async function seedDatabase() {
         name: "رقايق جبنة", 
         description: "رقايق مقرمشة محشوة بالجبنة", 
         price: 450, 
-        image: "/attached_assets/generated_images/crispy_cheese_rolls_on_a_plate.png", 
+        image: "/attached_assets/generated_images/cheese_rolls_rakayek_jibneh_plate.png", 
         isPopular: true
       },
       { 
@@ -89,7 +89,7 @@ async function seedDatabase() {
         name: "رقايق جبنة و سجق", 
         description: "رقايق مقرمشة محشوة بالجبنة والسجق", 
         price: 500, 
-        image: "/attached_assets/generated_images/cheese_and_sujuk_rolls_appetizer.png", 
+        image: "/attached_assets/generated_images/cheese_and_sujuk_rolls_appetizer_platter.png", 
         isPopular: true
       },
       { 
@@ -97,7 +97,7 @@ async function seedDatabase() {
         name: "سمبوسك لحمة", 
         description: "سمبوسك محشوة باللحم", 
         price: 550, 
-        image: "/attached_assets/generated_images/plate_of_meat_sambousek_pastries.png", 
+        image: "/attached_assets/generated_images/meat_sambousek_pastries_on_wooden_board.png", 
         isPopular: true
       },
       { 
@@ -105,7 +105,7 @@ async function seedDatabase() {
         name: "سمبوسك جبنة", 
         description: "سمبوسك محشوة بالجبنة", 
         price: 450, 
-        image: "/attached_assets/generated_images/plate_of_cheese_sambousek_pastries.png", 
+        image: "/attached_assets/generated_images/cheese_sambousek_pastries_with_nigella_seeds.png", 
         isPopular: true
       },
       { 
@@ -113,7 +113,7 @@ async function seedDatabase() {
         name: "ورق عنب بزيت", 
         description: "ورق عنب بالزيت والليمون", 
         price: 1000, 
-        image: "/attached_assets/generated_images/grape_leaves_in_olive_oil_platter.png", 
+        image: "/attached_assets/generated_images/grape_leaves_bi_zeit_with_pomegranate_seeds.png", 
         isPopular: true
       },
       // Main Dishes
@@ -122,7 +122,7 @@ async function seedDatabase() {
         name: "كبة مشوية", 
         description: "كبة مشوية على الفحم بنكهة الشواء الأصيلة", 
         price: 750, 
-        image: "/attached_assets/generated_images/grilled_kibbeh_on_charcoal_grill.png", 
+        image: "/attached_assets/generated_images/grilled_kibbeh_disc_with_charcoal_marks.png", 
         isPopular: true
       },
       { 
@@ -130,7 +130,7 @@ async function seedDatabase() {
         name: "ششبرك لحمة", 
         description: "ششبرك باللحم واللبن", 
         price: 500, 
-        image: "/attached_assets/generated_images/shishbarak_dumplings_in_yogurt_sauce.png", 
+        image: "/attached_assets/generated_images/shishbarak_dumplings_in_warm_yogurt_sauce.png", 
         isPopular: true
       },
       { 
@@ -138,7 +138,7 @@ async function seedDatabase() {
         name: "ورق عنب بلحمة", 
         description: "ورق عنب مطهو مع اللحم", 
         price: 1300, 
-        image: "/attached_assets/generated_images/grape_leaves_with_meat_platter.png", 
+        image: "/attached_assets/generated_images/grape_leaves_warak_enab_with_meat_chunks.png", 
         isPopular: true
       },
       { 
@@ -146,7 +146,7 @@ async function seedDatabase() {
         name: "كبة قراص", 
         description: "أقراص كبة مميزة", 
         price: 500, 
-        image: "/attached_assets/generated_images/kibbeh_qrass_traditional_patties.png", 
+        image: "/attached_assets/generated_images/traditional_kibbeh_qrass_patties_with_nuts.png", 
         isPopular: true
       },
     ]);
