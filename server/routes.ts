@@ -3,11 +3,16 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
+import path from "path";
+import express from "express";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  app.use("/attached_assets", express.static(path.resolve(process.cwd(), "attached_assets")));
+  app.use("/images", express.static(path.resolve(process.cwd(), "attached_assets/generated_images")));
+
   // === API Routes ===
 
   app.get(api.categories.list.path, async (_req, res) => {
@@ -73,7 +78,7 @@ async function seedDatabase() {
         name: "كبة مقلية", 
         description: "كبة محشوة باللحم والصنوبر مقلية ومقرمشة", 
         price: 500, // 5.00
-        image: "/attached_assets/generated_images/fried_kibbeh_balls_with_meat_filling.png",
+        image: "/images/fried_kibbeh_balls_with_meat_filling.png",
         isPopular: true
       },
       { 
@@ -81,7 +86,7 @@ async function seedDatabase() {
         name: "رقايق جبنة", 
         description: "رقايق مقرمشة محشوة بالجبنة", 
         price: 450, 
-        image: "/attached_assets/generated_images/cheese_rolls_rakayek_jibneh_plate.png", 
+        image: "/images/cheese_rolls_rakayek_jibneh_plate.png", 
         isPopular: true
       },
       { 
@@ -89,7 +94,7 @@ async function seedDatabase() {
         name: "رقايق جبنة و سجق", 
         description: "رقايق مقرمشة محشوة بالجبنة والسجق", 
         price: 500, 
-        image: "/attached_assets/generated_images/cheese_and_sujuk_rolls_appetizer_platter.png", 
+        image: "/images/cheese_and_sujuk_rolls_appetizer_platter.png", 
         isPopular: true
       },
       { 
@@ -97,7 +102,7 @@ async function seedDatabase() {
         name: "سمبوسك لحمة", 
         description: "سمبوسك محشوة باللحم", 
         price: 550, 
-        image: "/attached_assets/generated_images/meat_sambousek_pastries_on_wooden_board.png", 
+        image: "/images/meat_sambousek_pastries_on_wooden_board.png", 
         isPopular: true
       },
       { 
@@ -105,7 +110,7 @@ async function seedDatabase() {
         name: "سمبوسك جبنة", 
         description: "سمبوسك محشوة بالجبنة", 
         price: 450, 
-        image: "/attached_assets/generated_images/cheese_sambousek_pastries_with_nigella_seeds.png", 
+        image: "/images/cheese_sambousek_pastries_with_nigella_seeds.png", 
         isPopular: true
       },
       { 
@@ -113,7 +118,7 @@ async function seedDatabase() {
         name: "ورق عنب بزيت", 
         description: "ورق عنب بالزيت والليمون", 
         price: 1000, 
-        image: "/attached_assets/generated_images/grape_leaves_bi_zeit_with_pomegranate_seeds.png", 
+        image: "/images/grape_leaves_bi_zeit_with_pomegranate_seeds.png", 
         isPopular: true
       },
       // Main Dishes
@@ -122,7 +127,7 @@ async function seedDatabase() {
         name: "كبة مشوية", 
         description: "كبة مشوية على الفحم بنكهة الشواء الأصيلة", 
         price: 750, 
-        image: "/attached_assets/generated_images/grilled_kibbeh_disc_with_charcoal_marks.png", 
+        image: "/images/grilled_kibbeh_disc_with_charcoal_marks.png", 
         isPopular: true
       },
       { 
@@ -130,7 +135,7 @@ async function seedDatabase() {
         name: "ششبرك لحمة", 
         description: "ششبرك باللحم واللبن", 
         price: 500, 
-        image: "/attached_assets/generated_images/shishbarak_dumplings_in_warm_yogurt_sauce.png", 
+        image: "/images/shishbarak_dumplings_in_warm_yogurt_sauce.png", 
         isPopular: true
       },
       { 
@@ -138,7 +143,7 @@ async function seedDatabase() {
         name: "ورق عنب بلحمة", 
         description: "ورق عنب مطهو مع اللحم", 
         price: 1300, 
-        image: "/attached_assets/generated_images/grape_leaves_warak_enab_with_meat_chunks.png", 
+        image: "/images/grape_leaves_warak_enab_with_meat_chunks.png", 
         isPopular: true
       },
       { 
@@ -146,7 +151,7 @@ async function seedDatabase() {
         name: "كبة قراص", 
         description: "أقراص كبة مميزة", 
         price: 500, 
-        image: "/attached_assets/generated_images/traditional_kibbeh_qrass_patties_with_nuts.png", 
+        image: "/images/traditional_kibbeh_qrass_patties_with_nuts.png", 
         isPopular: true
       },
     ]);
