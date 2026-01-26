@@ -7,8 +7,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground">
-                <span className="font-display text-2xl font-bold">ك</span>
+              <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-white border-2 border-primary/20">
+                <img 
+                  src="/attached_assets/67b44034-7853-4948-8a1a-55382670af9a_1769435846205.jpeg" 
+                  alt="Logo" 
+                  className="w-full h-full object-cover"
+                />
               </div>
               <span className="font-display text-3xl font-bold text-white">مطبخ آدم</span>
             </div>
