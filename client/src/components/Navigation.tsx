@@ -77,8 +77,12 @@ export function Navigation() {
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer group">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg group-hover:scale-105 transition-transform duration-300">
-                <span className="font-display text-xl font-bold">ك</span>
+              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-primary/20">
+                <img 
+                  src="/attached_assets/67b44034-7853-4948-8a1a-55382670af9a_1769435846205.jpeg" 
+                  alt="Logo" 
+                  className="w-full h-full object-cover"
+                />
               </div>
               <span className={`font-display text-2xl font-bold transition-colors duration-300 ${scrolled ? "text-foreground" : "text-white"}`}>
                 مطبخ آدم
