@@ -109,11 +109,18 @@ export default function Contact() {
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center text-primary shadow-sm shrink-0">
-                    <MapPin className="w-6 h-6" />
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.03 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 2.89 3.46 2.84 1.12-.03 2.19-.64 2.77-1.6.29-.51.48-1.09.53-1.67.08-2.73.04-5.46.05-8.19l-.04-.41z"/></svg>
                   </div>
                   <div>
-                    <h4 className="font-bold mb-1">الموقع</h4>
-                    <p className="text-muted-foreground">بيروت، لبنان</p>
+                    <h4 className="font-bold mb-1">تيك توك</h4>
+                    <a 
+                      href="https://www.tiktok.com/@kitchen1adam?_d=secCgYIASAHKAESPgo8PCSC2Pau%2F1pEYRs6YGMcnJYHNprXvOxNtYqKL7BnzzR67Lw4aEhcYub7qupYgt8jUFRKHk1tjX%2BPSKRzGgA%3D&_r=1&object_id=7043135113269429249&page_open_method=scan_code&schema_type=4&sec_uid=MS4wLjABAAAA-KTGYTac53ievCR1tnhvy2WgjfyoCrcR6eSFFc9a10fb1MEUo1Btd-UOdsskVT7E&share_app_id=1233&share_author_id=7043135113269429249&share_uid=7424538430569546757&tt_from=scan_code&utm_campaign=client_scan_code&utm_medium=2&utm_source=scan_code" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      @kitchen1adam
+                    </a>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
@@ -129,18 +136,23 @@ export default function Contact() {
             </div>
 
             <div className="rounded-3xl overflow-hidden h-64 shadow-lg border border-border">
-              {/* Placeholder map image - in production use Google Maps iframe */}
+              {/* TikTok instead of Map */}
               <div className="w-full h-full bg-muted flex items-center justify-center relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&auto=format&fit=crop&q=60" 
-                  alt="Map Location" 
+                  src="https://images.unsplash.com/photo-1611605698335-8b1c7170a6e2?w=800&auto=format&fit=crop&q=60" 
+                  alt="TikTok" 
                   className="w-full h-full object-cover opacity-60"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Button variant="secondary" className="shadow-lg font-bold">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    عرض على الخريطة
-                  </Button>
+                  <a 
+                    href="https://www.tiktok.com/@kitchen1adam?_d=secCgYIASAHKAESPgo8PCSC2Pau%2F1pEYRs6YGMcnJYHNprXvOxNtYqKL7BnzzR67Lw4aEhcYub7qupYgt8jUFRKHk1tjX%2BPSKRzGgA%3D&_r=1&object_id=7043135113269429249&page_open_method=scan_code&schema_type=4&sec_uid=MS4wLjABAAAA-KTGYTac53ievCR1tnhvy2WgjfyoCrcR6eSFFc9a10fb1MEUo1Btd-UOdsskVT7E&share_app_id=1233&share_author_id=7043135113269429249&share_uid=7424538430569546757&tt_from=scan_code&utm_campaign=client_scan_code&utm_medium=2&utm_source=scan_code"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="secondary" className="shadow-lg font-bold">
+                      تابعنا على تيك توك
+                    </Button>
+                  </a>
                 </div>
               </div>
             </div>
