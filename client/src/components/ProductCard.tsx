@@ -1,17 +1,21 @@
 import { motion } from "framer-motion";
 import { type Product } from "@shared/schema";
-import { ShoppingBag, Star, Plus } from "lucide-react";
+import { ShoppingBag, Star, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCart();
+  const { addItem, updateQuantity, items } = useCart();
   const { toast } = useToast();
+  
+  const cartItem = items.find(item => item.id === product.id);
+  const quantity = cartItem ? cartItem.quantity : 0;
 
   const handleAddToCart = () => {
     addItem(product);
@@ -20,6 +24,11 @@ export function ProductCard({ product }: ProductCardProps) {
       description: `${product.name} تمت إضافته إلى السلة`,
       duration: 2000,
     });
+  };
+
+  const handleUpdateQuantity = (newQty: number) => {
+    if (newQty <= 0) return;
+    updateQuantity(product.id, newQty);
   };
 
   return (
@@ -39,11 +48,6 @@ export function ProductCard({ product }: ProductCardProps) {
             <span>مشهور</span>
           </div>
         )}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <Button className="rounded-full bg-white text-black hover:bg-white/90 font-bold px-6">
-            عرض التفاصيل
-          </Button>
-        </div>
       </div>
 
       <div className="p-5 flex-1 flex flex-col">
@@ -61,14 +65,37 @@ export function ProductCard({ product }: ProductCardProps) {
               {(product.price / 100).toFixed(2)} د.أ
             </span>
           </div>
-          <Button 
-            size="icon" 
-            className="rounded-full shadow-md bg-primary hover:bg-primary/90"
-            onClick={handleAddToCart}
-            data-testid={`button-add-to-cart-${product.id}`}
-          >
-            <Plus className="w-5 h-5" />
-          </Button>
+          
+          {quantity > 0 ? (
+            <div className="flex items-center gap-2 bg-muted rounded-full p-1 border border-border">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 rounded-full"
+                onClick={() => handleUpdateQuantity(quantity - 1)}
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <span className="font-bold w-4 text-center">{quantity}</span>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 rounded-full"
+                onClick={() => handleUpdateQuantity(quantity + 1)}
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              size="icon" 
+              className="rounded-full shadow-md bg-primary hover:bg-primary/90"
+              onClick={handleAddToCart}
+              data-testid={`button-add-to-cart-${product.id}`}
+            >
+              <Plus className="w-5 h-5" />
+            </Button>
+          )}
         </div>
       </div>
     </motion.div>

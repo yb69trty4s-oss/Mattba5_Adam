@@ -58,7 +58,7 @@ export function Navigation() {
           `يرجى تأكيد الطلب وتزويدي بالوقت المتوقع للتوصيل.`
         );
         
-        window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+        window.open(`https://wa.me/96181984634?text=${message}`, "_blank");
         setShowSuccess(false);
         clearCart();
       }, 2000);
