@@ -26,7 +26,6 @@ export function Footer() {
             <ul className="space-y-4 text-white/70">
               <li><a href="/" className="hover:text-primary transition-colors">الرئيسية</a></li>
               <li><a href="/menu" className="hover:text-primary transition-colors">القائمة</a></li>
-              <li><a href="/offers" className="hover:text-primary transition-colors">العروض</a></li>
               <li><a href="/contact" className="hover:text-primary transition-colors">اتصل بنا</a></li>
             </ul>
           </div>

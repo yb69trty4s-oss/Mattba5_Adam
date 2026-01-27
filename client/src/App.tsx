@@ -9,7 +9,6 @@ import NotFound from "@/pages/not-found";
 // Pages
 import Home from "@/pages/Home";
 import Menu from "@/pages/Menu";
-import Offers from "@/pages/Offers";
 import Contact from "@/pages/Contact";
 import AdminPanel from "@/pages/AdminPanel";
 
@@ -18,7 +17,6 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/menu" component={Menu} />
-      <Route path="/offers" component={Offers} />
       <Route path="/contact" component={Contact} />
       <Route path="/admin" component={AdminPanel} />
       {/* Fallback to 404 */}

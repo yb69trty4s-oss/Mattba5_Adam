@@ -19,7 +19,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 const links = [
   { href: "/", label: "الرئيسية" },
   { href: "/menu", label: "القائمة" },
-  { href: "/offers", label: "العروض" },
 ];
 
 export function Navigation() {

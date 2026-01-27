@@ -28,7 +28,7 @@ export async function registerRoutes(
     res.json(category);
   });
 
-  app.get(api.products.list.path, async (req, res) => {
+  app.get("/api/products", async (req, res) => {
     // Manually parse query params since Express doesn't auto-coerce types exactly like Zod wants sometimes
     const categoryId = req.query.categoryId ? Number(req.query.categoryId) : undefined;
     const isPopular = req.query.isPopular === 'true';
@@ -37,17 +37,12 @@ export async function registerRoutes(
     res.json(products);
   });
 
-  app.get(api.products.get.path, async (req, res) => {
+  app.get("/api/products/:id", async (req, res) => {
     const product = await storage.getProduct(Number(req.params.id));
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
     res.json(product);
-  });
-
-  app.get("/api/offers", async (_req, res) => {
-    const offers = await storage.getOffers();
-    res.json(offers);
   });
 
   app.patch("/api/products/:id/price", async (req, res) => {
@@ -174,23 +169,6 @@ async function seedDatabase() {
         image: "/images/traditional_kibbeh_qrass_patties_with_nuts.png", 
         isPopular: true
       },
-    ]);
-
-    await storage.seedOffers([
-      {
-        title: "عرض العائلة",
-        description: "احصل على كيلو كبة مشوية + نصف كيلو ورق عنب بسعر مميز",
-        originalPrice: 3000,
-        discountedPrice: 2500,
-        image: "/images/hero2.png"
-      },
-      {
-        title: "عرض الجمعة",
-        description: "خصم 20% على جميع المقبلات",
-        originalPrice: 1000,
-        discountedPrice: 800,
-        image: "/images/hero1.png"
-      }
     ]);
   }
   

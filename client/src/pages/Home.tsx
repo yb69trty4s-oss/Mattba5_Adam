@@ -118,36 +118,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Offers Section */}
-      <section className="py-24 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-              عروض خاصة
-            </h2>
-            <Link href="/offers">
-              <Button variant="ghost" className="gap-2 text-primary hover:text-primary/80">
-                عرض الكل <ArrowLeft className="w-4 h-4 rtl-flip" />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {isOffersLoading ? (
-              <div className="col-span-full py-20 text-center text-muted-foreground">جاري تحميل العروض...</div>
-            ) : offers?.length ? (
-              offers.slice(0, 2).map((offer, idx) => (
-                <OfferCard key={offer.id} offer={offer} index={idx} />
-              ))
-            ) : (
-              <div className="col-span-full py-12 text-center bg-card rounded-2xl border border-dashed border-border">
-                <p className="text-muted-foreground">لا توجد عروض حالياً، تفقد القائمة الرئيسية!</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* Featured Products */}
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4">
