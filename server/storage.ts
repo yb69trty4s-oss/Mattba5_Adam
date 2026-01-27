@@ -2,10 +2,8 @@ import { db } from "./db";
 import {
   categories,
   products,
-  offers,
   type Category,
   type Product,
-  type Offer,
 } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
@@ -19,7 +17,6 @@ export interface IStorage {
   // Seeding methods
   seedCategories(data: any[]): Promise<void>;
   seedProducts(data: any[]): Promise<void>;
-  seedOffers(data: any[]): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -71,12 +68,6 @@ export class DatabaseStorage implements IStorage {
   async seedProducts(data: any[]): Promise<void> {
     if ((await this.getProducts()).length === 0) {
       await db.insert(products).values(data);
-    }
-  }
-
-  async seedOffers(data: any[]): Promise<void> {
-    if ((await this.getOffers()).length === 0) {
-      await db.insert(offers).values(data);
     }
   }
 }

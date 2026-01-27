@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -19,22 +19,11 @@ export const products = pgTable("products", {
   isPopular: boolean("is_popular").default(false),
 });
 
-export const offers = pgTable("offers", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  originalPrice: integer("original_price"),
-  discountedPrice: integer("discounted_price").notNull(),
-  image: text("image").notNull(),
-});
-
 export const insertCategorySchema = createInsertSchema(categories).omit({ id: true });
 export const insertProductSchema = createInsertSchema(products).omit({ id: true });
-export const insertOfferSchema = createInsertSchema(offers).omit({ id: true });
 
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
-export type Offer = typeof offers.$inferSelect;
 
 // Admin Schemas
 export const updatePriceSchema = z.object({
