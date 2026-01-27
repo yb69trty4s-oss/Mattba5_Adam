@@ -48,13 +48,13 @@ export async function registerRoutes(
   app.patch("/api/products/:id/price", async (req, res) => {
     try {
       const id = Number(req.params.id);
-      const { price } = req.body;
+      const { price, priceUnit, priceUnitAmount } = req.body;
       
       if (typeof price !== 'number' || price < 0) {
         return res.status(400).json({ message: "Invalid price" });
       }
 
-      const updated = await storage.updateProductPrice(id, price);
+      const updated = await storage.updateProductPrice(id, price, priceUnit, priceUnitAmount);
       if (!updated) {
         return res.status(404).json({ message: "Product not found" });
       }

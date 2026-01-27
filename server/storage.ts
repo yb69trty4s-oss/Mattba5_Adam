@@ -12,7 +12,7 @@ export interface IStorage {
   getCategory(id: number): Promise<Category | undefined>;
   getProducts(categoryId?: number, isPopular?: boolean): Promise<Product[]>;
   getProduct(id: number): Promise<Product | undefined>;
-  updateProductPrice(id: number, price: number): Promise<Product | undefined>;
+  updateProductPrice(id: number, price: number, priceUnit?: string, priceUnitAmount?: number): Promise<Product | undefined>;
   
   // Seeding methods
   seedCategories(data: any[]): Promise<void>;
@@ -50,10 +50,14 @@ export class DatabaseStorage implements IStorage {
     return product;
   }
 
-  async updateProductPrice(id: number, price: number): Promise<Product | undefined> {
+  async updateProductPrice(id: number, price: number, priceUnit?: string, priceUnitAmount?: number): Promise<Product | undefined> {
+    const updateData: any = { price };
+    if (priceUnit !== undefined) updateData.priceUnit = priceUnit;
+    if (priceUnitAmount !== undefined) updateData.priceUnitAmount = priceUnitAmount;
+    
     const [updated] = await db
       .update(products)
-      .set({ price })
+      .set(updateData)
       .where(eq(products.id, id))
       .returning();
     return updated;

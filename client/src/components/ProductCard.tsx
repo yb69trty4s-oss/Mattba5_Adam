@@ -1,13 +1,23 @@
 import { motion } from "framer-motion";
-import { type Product } from "@shared/schema";
-import { ShoppingBag, Star, Plus, Minus } from "lucide-react";
+import { type Product, type PriceUnit, priceUnitLabels } from "@shared/schema";
+import { Star, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
 
 interface ProductCardProps {
   product: Product;
+}
+
+function formatPriceUnit(product: Product): string {
+  const unit = (product.priceUnit as PriceUnit) || "piece";
+  const amount = product.priceUnitAmount || 1;
+  const unitLabel = priceUnitLabels[unit];
+  
+  if (amount === 1) return unitLabel;
+  if (amount === 0.5) return `نصف ${unitLabel}`;
+  if (amount === 0.25) return `ربع ${unitLabel}`;
+  return `${amount} ${unitLabel}`;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
@@ -62,7 +72,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">السعر</span>
             <span className="text-lg font-bold text-primary">
-              {(product.price / 100).toFixed(2)} د.أ
+              {(product.price / 100).toFixed(2)} د.أ / {formatPriceUnit(product)}
             </span>
           </div>
           

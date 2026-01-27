@@ -1,14 +1,116 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Product } from "@shared/schema";
+import { Product, priceUnits, priceUnitLabels, type PriceUnit } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Lock } from "lucide-react";
+
+function ProductPriceCard({ 
+  product, 
+  onUpdate, 
+  isPending 
+}: { 
+  product: Product; 
+  onUpdate: (data: { id: number; price: number; priceUnit?: string; priceUnitAmount?: number }) => void;
+  isPending: boolean;
+}) {
+  const [price, setPrice] = useState((product.price / 100).toString());
+  const [unit, setUnit] = useState<PriceUnit>((product.priceUnit as PriceUnit) || "piece");
+  const [amount, setAmount] = useState((product.priceUnitAmount || 1).toString());
+
+  const handleSubmit = () => {
+    const priceVal = parseFloat(price);
+    const amountVal = parseFloat(amount);
+    if (!isNaN(priceVal) && !isNaN(amountVal) && amountVal > 0) {
+      onUpdate({ 
+        id: product.id, 
+        price: Math.round(priceVal * 100),
+        priceUnit: unit,
+        priceUnitAmount: amountVal
+      });
+    }
+  };
+
+  const formatUnitDisplay = () => {
+    const unitLabel = priceUnitLabels[unit];
+    const amountNum = parseFloat(amount) || 1;
+    if (amountNum === 1) return unitLabel;
+    if (amountNum === 0.5) return `نصف ${unitLabel}`;
+    if (amountNum === 0.25) return `ربع ${unitLabel}`;
+    return `${amountNum} ${unitLabel}`;
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-xl font-bold">{product.name}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center gap-4 flex-wrap">
+          <span className="text-muted-foreground whitespace-nowrap">السعر الحالي:</span>
+          <span className="font-bold text-primary text-xl">
+            {(product.price / 100).toFixed(2)} د.أ / {formatUnitDisplay()}
+          </span>
+        </div>
+        
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              step="0.01"
+              placeholder="السعر"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              data-testid={`input-price-${product.id}`}
+            />
+            <span className="flex items-center text-muted-foreground">د.أ</span>
+          </div>
+          
+          <div className="flex gap-2 items-center">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">لكل</span>
+            <Input
+              type="number"
+              step="0.25"
+              min="0.01"
+              placeholder="الكمية"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-20"
+              data-testid={`input-amount-${product.id}`}
+            />
+            <Select value={unit} onValueChange={(v) => setUnit(v as PriceUnit)}>
+              <SelectTrigger className="w-28" data-testid={`select-unit-${product.id}`}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {priceUnits.map((u) => (
+                  <SelectItem key={u} value={u}>
+                    {priceUnitLabels[u]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <Button 
+            onClick={handleSubmit}
+            disabled={isPending}
+            className="w-full"
+            data-testid={`button-update-${product.id}`}
+          >
+            تحديث السعر
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function AdminPanel() {
   const [password, setPassword] = useState("");
@@ -21,8 +123,8 @@ export default function AdminPanel() {
   });
 
   const mutation = useMutation({
-    mutationFn: async ({ id, price }: { id: number; price: number }) => {
-      const res = await apiRequest("PATCH", `/api/products/${id}/price`, { price });
+    mutationFn: async ({ id, price, priceUnit, priceUnitAmount }: { id: number; price: number; priceUnit?: string; priceUnitAmount?: number }) => {
+      const res = await apiRequest("PATCH", `/api/products/${id}/price`, { price, priceUnit, priceUnitAmount });
       return res.json();
     },
     onSuccess: () => {
@@ -100,36 +202,12 @@ export default function AdminPanel() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products?.map((product) => (
-              <Card key={product.id}>
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold">{product.name}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <span className="text-muted-foreground whitespace-nowrap">السعر الحالي:</span>
-                    <span className="font-bold text-primary text-xl">${(product.price / 100).toFixed(2)}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="السعر الجديد"
-                      onBlur={(e) => {
-                        const val = parseFloat(e.target.value);
-                        if (!isNaN(val)) {
-                          mutation.mutate({ id: product.id, price: Math.round(val * 100) });
-                        }
-                      }}
-                    />
-                    <Button 
-                      disabled={mutation.isPending}
-                      className="whitespace-nowrap"
-                    >
-                      تحديث
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <ProductPriceCard 
+                key={product.id} 
+                product={product} 
+                onUpdate={(data) => mutation.mutate(data)}
+                isPending={mutation.isPending}
+              />
             ))}
           </div>
         )}
