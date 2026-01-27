@@ -76,7 +76,6 @@ async function seedDatabase() {
   
   // Arabic Data Seeding
   await storage.seedCategories([
-    { name: "مقبلات", slug: "appetizers", image: "/images/hero1.png" },
     { name: "أطباق رئيسية", slug: "main-dishes", image: "/images/hero2.png" },
     { name: "حلويات", slug: "desserts", image: "/images/hero1.png" },
   ]);
@@ -87,17 +86,17 @@ async function seedDatabase() {
 
   if (catMap.size > 0) {
     await storage.seedProducts([
-      // Appetizers
+      // Main Dishes
       { 
-        categoryId: catMap.get("appetizers"), 
+        categoryId: catMap.get("main-dishes"), 
         name: "كبة مقلية", 
         description: "كبة محشوة باللحم والصنوبر مقلية ومقرمشة", 
-        price: 500, // 5.00
+        price: 500,
         image: "/images/fried_kibbeh_balls_with_meat_filling.png",
         isPopular: true
       },
       { 
-        categoryId: catMap.get("appetizers"), 
+        categoryId: catMap.get("main-dishes"), 
         name: "رقايق جبنة", 
         description: "رقايق مقرمشة محشوة بالجبنة", 
         price: 450, 
@@ -105,7 +104,7 @@ async function seedDatabase() {
         isPopular: true
       },
       { 
-        categoryId: catMap.get("appetizers"), 
+        categoryId: catMap.get("main-dishes"), 
         name: "رقايق جبنة و سجق", 
         description: "رقايق مقرمشة محشوة بالجبنة والسجق", 
         price: 500, 
@@ -113,7 +112,7 @@ async function seedDatabase() {
         isPopular: true
       },
       { 
-        categoryId: catMap.get("appetizers"), 
+        categoryId: catMap.get("main-dishes"), 
         name: "سمبوسك لحمة", 
         description: "سمبوسك محشوة باللحم", 
         price: 550, 
@@ -121,7 +120,7 @@ async function seedDatabase() {
         isPopular: true
       },
       { 
-        categoryId: catMap.get("appetizers"), 
+        categoryId: catMap.get("main-dishes"), 
         name: "سمبوسك جبنة", 
         description: "سمبوسك محشوة بالجبنة", 
         price: 450, 
@@ -129,14 +128,13 @@ async function seedDatabase() {
         isPopular: true
       },
       { 
-        categoryId: catMap.get("appetizers"), 
+        categoryId: catMap.get("main-dishes"), 
         name: "ورق عنب بزيت", 
         description: "ورق عنب بالزيت والليمون", 
         price: 1000, 
         image: "/images/grape_leaves_bi_zeit_with_pomegranate_seeds.png", 
         isPopular: true
       },
-      // Main Dishes
       { 
         categoryId: catMap.get("main-dishes"), 
         name: "كبة مشوية", 
