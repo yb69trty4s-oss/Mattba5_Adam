@@ -11,6 +11,7 @@ import Home from "@/pages/Home";
 import Menu from "@/pages/Menu";
 import Offers from "@/pages/Offers";
 import Contact from "@/pages/Contact";
+import AdminPanel from "@/pages/AdminPanel";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/menu" component={Menu} />
       <Route path="/offers" component={Offers} />
       <Route path="/contact" component={Contact} />
+      <Route path="/admin" component={AdminPanel} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

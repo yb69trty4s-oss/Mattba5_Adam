@@ -35,3 +35,8 @@ export const insertOfferSchema = createInsertSchema(offers).omit({ id: true });
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type Offer = typeof offers.$inferSelect;
+
+// Admin Schemas
+export const updatePriceSchema = z.object({
+  price: z.number().min(0),
+});

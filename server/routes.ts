@@ -45,9 +45,29 @@ export async function registerRoutes(
     res.json(product);
   });
 
-  app.get(api.offers.list.path, async (_req, res) => {
+  app.get("/api/offers", async (_req, res) => {
     const offers = await storage.getOffers();
     res.json(offers);
+  });
+
+  app.patch("/api/products/:id/price", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const { price } = req.body;
+      
+      if (typeof price !== 'number' || price < 0) {
+        return res.status(400).json({ message: "Invalid price" });
+      }
+
+      const updated = await storage.updateProductPrice(id, price);
+      if (!updated) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
   });
 
   // === Seeding ===
