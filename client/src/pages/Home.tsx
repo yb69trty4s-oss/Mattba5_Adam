@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { useCategories, useOffers, useProducts } from "@/hooks/use-shop-data";
+import { useCategories, useProducts } from "@/hooks/use-shop-data";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
-import { OfferCard } from "@/components/OfferCard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ChevronDown, Utensils } from "lucide-react";
 
@@ -13,7 +12,6 @@ export default function Home() {
   const [heroImage, setHeroImage] = useState<string>("");
   const { data: categories, isLoading: isCatLoading } = useCategories();
   const { data: featuredProducts, isLoading: isProdLoading } = useProducts({ isPopular: true });
-  const { data: offers, isLoading: isOffersLoading } = useOffers();
 
   // Random hero image logic
   useEffect(() => {
