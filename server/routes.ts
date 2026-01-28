@@ -190,114 +190,11 @@ export async function registerRoutes(
     }
   });
 
-  // === Seeding ===
-  try {
-    await seedDatabase();
-  } catch (error) {
-    console.error("Seeding failed:", error);
-  }
-
+  // Seeding disabled as per user request
   return httpServer;
 }
 
 async function seedDatabase() {
-  console.log("Seeding database...");
-  
-  // Arabic Data Seeding
-  await storage.seedCategories([
-    { name: "أطباق رئيسية", slug: "main-dishes", image: "/attached_assets/IMG_2981_1769604353694.png" },
-    { name: "حلويات", slug: "desserts", image: "/attached_assets/IMG_2985_1769612513061.png" },
-  ]);
-
-  // Get categories to link products
-  const categories = await storage.getCategories();
-  const catMap = new Map(categories.map(c => [c.slug, c.id]));
-
-  if (catMap.size > 0) {
-    await storage.seedProducts([
-      // Main Dishes
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "كبة مقلية", 
-        description: "كبة محشوة باللحم والصنوبر مقلية ومقرمشة", 
-        price: 500,
-        image: "/attached_assets/IMG_2652_1768572690844.png",
-        isPopular: true
-      },
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "رقايق جبنة", 
-        description: "رقايق مقرمشة محشوة بالجبنة", 
-        price: 450, 
-        image: "/attached_assets/IMG_2653_1768572690844.png", 
-        isPopular: true
-      },
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "رقايق جبنة و سجق", 
-        description: "رقايق مقرمشة محشوة بالجبنة والسجق", 
-        price: 500, 
-        image: "/attached_assets/15111f73-0559-40de-94be-31169d52e798_1769617810258.jpeg", 
-        isPopular: true
-      },
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "سمبوسك لحمة", 
-        description: "سمبوسك محشوة باللحم", 
-        price: 550, 
-        image: "/attached_assets/67b44034-7853-4948-8a1a-55382670af9a_1769435846205.jpeg", 
-        isPopular: true
-      },
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "سمبوسك جبنة", 
-        description: "سمبوسك محشوة بالجبنة", 
-        price: 450, 
-        image: "/attached_assets/IMG_2652_1768572690844.png", 
-        isPopular: true
-      },
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "ورق عنب بزيت", 
-        description: "ورق عنب بالزيت والليمون", 
-        price: 1000, 
-        image: "/attached_assets/IMG_2653_1768572690844.png", 
-        isPopular: true
-      },
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "كبة مشوية", 
-        description: "كبة مشوية على الفحم بنكهة الشواء الأصيلة", 
-        price: 750, 
-        image: "/attached_assets/IMG_2652_1768572690844.png", 
-        isPopular: true
-      },
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "ششبرك لحمة", 
-        description: "ششبرك باللحم واللبن", 
-        price: 500, 
-        image: "/attached_assets/IMG_2653_1768572690844.png", 
-        isPopular: true
-      },
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "ورق عنب بلحمة", 
-        description: "ورق عنب مطهو مع اللحم", 
-        price: 1300, 
-        image: "/attached_assets/15111f73-0559-40de-94be-31169d52e798_1769617810258.jpeg", 
-        isPopular: true
-      },
-      { 
-        categoryId: catMap.get("main-dishes"), 
-        name: "كبة قراص", 
-        description: "أقراص كبة مميزة", 
-        price: 500, 
-        image: "/attached_assets/67b44034-7853-4948-8a1a-55382670af9a_1769435846205.jpeg", 
-        isPopular: true
-      },
-    ]);
-  }
-  
-  console.log("Database seeded successfully.");
+  // Seeding disabled or silenced as per user request
+  return;
 }

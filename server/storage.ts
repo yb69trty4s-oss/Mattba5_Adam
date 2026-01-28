@@ -57,26 +57,7 @@ export class DatabaseStorage implements IStorage {
       query = query.where(eq(products.isPopular, true));
     }
     
-    const results = await query;
-    
-    // Map of hardcoded images for production/empty DB states
-    const imageMap: Record<string, string> = {
-      "كبة مقلية": "/images/fried_kibbeh_balls_with_meat_filling.png",
-      "رقايق جبنة": "/images/cheese_rolls_rakayek_jibneh_plate.png",
-      "رقايق جبنة و سجق": "/images/cheese_and_sujuk_rolls_appetizer_platter.png",
-      "سمبوسك لحمة": "/images/meat_sambousek_pastries_on_wooden_board.png",
-      "سمبوسك جبنة": "/images/cheese_sambousek_pastries_with_nigella_seeds.png",
-      "ورق عنب بزيت": "/images/grape_leaves_bi_zeit_with_pomegranate_seeds.png",
-      "كبة مشوية": "/images/grilled_kibbeh_disc_with_charcoal_marks.png",
-      "ششبرك لحمة": "/images/shishbarak_dumplings_in_warm_yogurt_sauce.png",
-      "ورق عنب بلحمة": "/images/grape_leaves_warak_enab_with_meat_chunks.png",
-      "كبة قراص": "/images/traditional_kibbeh_qrass_patties_with_nuts.png"
-    };
-
-    return results.map(p => ({
-      ...p,
-      image: imageMap[p.name] || p.image
-    }));
+    return await query;
   }
 
   async getProduct(id: number): Promise<Product | undefined> {
@@ -140,15 +121,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async seedCategories(data: any[]): Promise<void> {
-    if ((await this.getCategories()).length === 0) {
-      await db.insert(categories).values(data);
-    }
+    // Disabled as per user request
   }
 
   async seedProducts(data: any[]): Promise<void> {
-    if ((await this.getProducts()).length === 0) {
-      await db.insert(products).values(data);
-    }
+    // Disabled as per user request
   }
 }
 
