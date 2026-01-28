@@ -61,39 +61,30 @@ export function Navigation() {
     if (selectedDeliveryType === "delivery" && !selectedZone) return;
     
     setShowDeliveryModal(false);
-    setIsOrdering(true);
     
-    setTimeout(() => {
-      setIsOrdering(false);
-      setShowSuccess(true);
-      
-      setTimeout(() => {
-        const orderText = items
-          .map((item) => `• ${item.name} (${item.quantity}x) - ${((item.price * item.quantity) / 100).toFixed(2)} د.أ`)
-          .join("\n");
-        
-        let deliveryInfo = "";
-        if (selectedDeliveryType === "delivery" && selectedZone) {
-          deliveryInfo = `\n*التوصيل:* ${selectedZone.name} - ${(selectedZone.price / 100).toFixed(2)} د.أ`;
-        } else {
-          deliveryInfo = "\n*الاستلام:* من المحل مباشرة";
-        }
-        
-        const message = encodeURIComponent(
-          `*طلب جديد من مطبخ آدم*\n\n` +
-          `*الطلبات:*\n${orderText}\n` +
-          deliveryInfo + `\n\n` +
-          `*المجموع الإجمالي: ${(grandTotal / 100).toFixed(2)} د.أ*\n\n` +
-          `يرجى تأكيد الطلب وتزويدي بالوقت المتوقع.`
-        );
-        
-        window.open(`https://wa.me/96181984634?text=${message}`, "_blank");
-        setShowSuccess(false);
-        setSelectedDeliveryType("pickup");
-        setSelectedZone(null);
-        clearCart();
-      }, 2000);
-    }, 1500);
+    const orderText = items
+      .map((item) => `• ${item.name} (${item.quantity}x) - ${((item.price * item.quantity) / 100).toFixed(2)} د.أ`)
+      .join("\n");
+    
+    let deliveryInfo = "";
+    if (selectedDeliveryType === "delivery" && selectedZone) {
+      deliveryInfo = `\n*التوصيل:* ${selectedZone.name} - ${(selectedZone.price / 100).toFixed(2)} د.أ\n_سأرسل العنوان التفصيلي هنا_`;
+    } else {
+      deliveryInfo = "\n*الاستلام:* من المحل مباشرة\n_سأحدد وقت الاستلام المناسب_";
+    }
+    
+    const message = encodeURIComponent(
+      `*طلب جديد من مطبخ آدم*\n\n` +
+      `*الطلبات:*\n${orderText}\n` +
+      deliveryInfo + `\n\n` +
+      `*المجموع الإجمالي: ${(grandTotal / 100).toFixed(2)} د.أ*\n\n` +
+      `يرجى تأكيد الطلب.`
+    );
+    
+    window.open(`https://wa.me/96181984634?text=${message}`, "_blank");
+    setSelectedDeliveryType("pickup");
+    setSelectedZone(null);
+    clearCart();
   };
 
   return (
