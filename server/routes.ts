@@ -191,7 +191,11 @@ export async function registerRoutes(
   });
 
   // === Seeding ===
-  await seedDatabase();
+  try {
+    await seedDatabase();
+  } catch (error) {
+    console.error("Seeding failed:", error);
+  }
 
   return httpServer;
 }
