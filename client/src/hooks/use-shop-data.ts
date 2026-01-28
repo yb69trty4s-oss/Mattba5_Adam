@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api, buildUrl } from "@shared/routes";
-import { type Category, type Product } from "@shared/schema";
+import { type Category, type Product, type DeliveryZone } from "@shared/schema";
 
 // Categories
 export function useCategories() {
@@ -56,5 +56,17 @@ export function useProduct(id: number) {
       return api.products.get.responses[200].parse(await res.json());
     },
     enabled: !!id,
+  });
+}
+
+// Delivery Zones
+export function useDeliveryZones() {
+  return useQuery<DeliveryZone[]>({
+    queryKey: ["/api/delivery-zones"],
+    queryFn: async () => {
+      const res = await fetch("/api/delivery-zones");
+      if (!res.ok) throw new Error("Failed to fetch delivery zones");
+      return res.json();
+    },
   });
 }

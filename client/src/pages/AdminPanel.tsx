@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Product, priceUnits, priceUnitLabels, type PriceUnit } from "@shared/schema";
+import { Product, priceUnits, priceUnitLabels, type PriceUnit, type DeliveryZone } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Lock } from "lucide-react";
+import { Loader2, Lock, Trash2, Plus, MapPin } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 function ProductPriceCard({ 
   product, 
@@ -112,13 +113,85 @@ function ProductPriceCard({
   );
 }
 
+function DeliveryZoneCard({
+  zone,
+  onUpdate,
+  onDelete,
+  isPending
+}: {
+  zone: DeliveryZone;
+  onUpdate: (data: { id: number; name?: string; price?: number }) => void;
+  onDelete: (id: number) => void;
+  isPending: boolean;
+}) {
+  const [name, setName] = useState(zone.name);
+  const [price, setPrice] = useState((zone.price / 100).toString());
+
+  const handleUpdate = () => {
+    const priceVal = parseFloat(price);
+    if (name.trim() && !isNaN(priceVal) && priceVal >= 0) {
+      onUpdate({ id: zone.id, name: name.trim(), price: Math.round(priceVal * 100) });
+    }
+  };
+
+  return (
+    <Card>
+      <CardContent className="p-4 space-y-3">
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="اسم المنطقة"
+          data-testid={`input-zone-name-${zone.id}`}
+        />
+        <div className="flex items-center gap-2">
+          <Input
+            type="number"
+            step="0.01"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="flex-1"
+            data-testid={`input-zone-price-${zone.id}`}
+          />
+          <span className="text-muted-foreground">د.أ</span>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            onClick={handleUpdate}
+            disabled={isPending}
+            className="flex-1"
+            data-testid={`button-update-zone-${zone.id}`}
+          >
+            تحديث
+          </Button>
+          <Button 
+            variant="destructive"
+            size="icon"
+            onClick={() => onDelete(zone.id)}
+            disabled={isPending}
+            data-testid={`button-delete-zone-${zone.id}`}
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function AdminPanel() {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [newZoneName, setNewZoneName] = useState("");
+  const [newZonePrice, setNewZonePrice] = useState("");
   const { toast } = useToast();
 
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
+    enabled: isAuthenticated
+  });
+
+  const { data: deliveryZones, isLoading: isLoadingZones } = useQuery<DeliveryZone[]>({
+    queryKey: ["/api/delivery-zones"],
     enabled: isAuthenticated
   });
 
@@ -142,6 +215,56 @@ export default function AdminPanel() {
       });
     }
   });
+
+  const createZoneMutation = useMutation({
+    mutationFn: async ({ name, price }: { name: string; price: number }) => {
+      const res = await apiRequest("POST", "/api/delivery-zones", { name, price });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/delivery-zones"] });
+      setNewZoneName("");
+      setNewZonePrice("");
+      toast({ title: "تمت الإضافة", description: "تمت إضافة منطقة التوصيل بنجاح" });
+    },
+    onError: () => {
+      toast({ variant: "destructive", title: "خطأ", description: "فشل إضافة المنطقة" });
+    }
+  });
+
+  const updateZoneMutation = useMutation({
+    mutationFn: async ({ id, name, price }: { id: number; name?: string; price?: number }) => {
+      const res = await apiRequest("PATCH", `/api/delivery-zones/${id}`, { name, price });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/delivery-zones"] });
+      toast({ title: "تم التحديث", description: "تم تحديث منطقة التوصيل بنجاح" });
+    },
+    onError: () => {
+      toast({ variant: "destructive", title: "خطأ", description: "فشل تحديث المنطقة" });
+    }
+  });
+
+  const deleteZoneMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/delivery-zones/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/delivery-zones"] });
+      toast({ title: "تم الحذف", description: "تم حذف منطقة التوصيل" });
+    },
+    onError: () => {
+      toast({ variant: "destructive", title: "خطأ", description: "فشل حذف المنطقة" });
+    }
+  });
+
+  const handleAddZone = () => {
+    const price = parseFloat(newZonePrice);
+    if (newZoneName.trim() && !isNaN(price) && price >= 0) {
+      createZoneMutation.mutate({ name: newZoneName.trim(), price: Math.round(price * 100) });
+    }
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -192,25 +315,95 @@ export default function AdminPanel() {
   return (
     <div className="min-h-screen bg-background flex flex-col" dir="rtl">
       <Navigation />
-      <main className="flex-1 container mx-auto px-4 py-32">
-        <h1 className="text-4xl font-display font-bold mb-8">إدارة الأسعار</h1>
-        
-        {isLoading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products?.map((product) => (
-              <ProductPriceCard 
-                key={product.id} 
-                product={product} 
-                onUpdate={(data) => mutation.mutate(data)}
-                isPending={mutation.isPending}
-              />
-            ))}
-          </div>
-        )}
+      <main className="flex-1 container mx-auto px-4 py-32 space-y-12">
+        <section>
+          <h1 className="text-4xl font-display font-bold mb-8">إدارة الأسعار</h1>
+          
+          {isLoading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products?.map((product) => (
+                <ProductPriceCard 
+                  key={product.id} 
+                  product={product} 
+                  onUpdate={(data) => mutation.mutate(data)}
+                  isPending={mutation.isPending}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        <Separator />
+
+        <section>
+          <h2 className="text-3xl font-display font-bold mb-8 flex items-center gap-3">
+            <MapPin className="w-8 h-8 text-primary" />
+            مناطق التوصيل
+          </h2>
+          
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>إضافة منطقة جديدة</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-3 flex-wrap">
+                <Input
+                  placeholder="اسم المنطقة"
+                  value={newZoneName}
+                  onChange={(e) => setNewZoneName(e.target.value)}
+                  className="flex-1 min-w-[200px]"
+                  data-testid="input-new-zone-name"
+                />
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="سعر التوصيل"
+                    value={newZonePrice}
+                    onChange={(e) => setNewZonePrice(e.target.value)}
+                    className="w-32"
+                    data-testid="input-new-zone-price"
+                  />
+                  <span className="text-muted-foreground">د.أ</span>
+                </div>
+                <Button 
+                  onClick={handleAddZone}
+                  disabled={createZoneMutation.isPending}
+                  data-testid="button-add-zone"
+                >
+                  <Plus className="w-4 h-4 ml-2" />
+                  إضافة
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {isLoadingZones ? (
+            <div className="flex justify-center py-10">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : deliveryZones && deliveryZones.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {deliveryZones.map((zone) => (
+                <DeliveryZoneCard
+                  key={zone.id}
+                  zone={zone}
+                  onUpdate={(data) => updateZoneMutation.mutate(data)}
+                  onDelete={(id) => deleteZoneMutation.mutate(id)}
+                  isPending={updateZoneMutation.isPending || deleteZoneMutation.isPending}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-10 text-muted-foreground">
+              لا توجد مناطق توصيل. قم بإضافة منطقة جديدة أعلاه.
+            </div>
+          )}
+        </section>
       </main>
       <Footer />
     </div>

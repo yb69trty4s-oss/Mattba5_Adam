@@ -65,6 +65,56 @@ export async function registerRoutes(
     }
   });
 
+  // === Delivery Zones ===
+  app.get("/api/delivery-zones", async (_req, res) => {
+    const zones = await storage.getDeliveryZones();
+    res.json(zones);
+  });
+
+  app.post("/api/delivery-zones", async (req, res) => {
+    try {
+      const { name, price } = req.body;
+      if (!name || typeof price !== 'number') {
+        return res.status(400).json({ message: "Invalid data" });
+      }
+      const zone = await storage.createDeliveryZone({ name, price });
+      res.json(zone);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.patch("/api/delivery-zones/:id", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const { name, price } = req.body;
+      const updateData: any = {};
+      if (name) updateData.name = name;
+      if (typeof price === 'number') updateData.price = price;
+      
+      const updated = await storage.updateDeliveryZone(id, updateData);
+      if (!updated) {
+        return res.status(404).json({ message: "Zone not found" });
+      }
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.delete("/api/delivery-zones/:id", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const deleted = await storage.deleteDeliveryZone(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Zone not found" });
+      }
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
   // === Seeding ===
   await seedDatabase();
 
