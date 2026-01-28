@@ -1,9 +1,11 @@
 import { Link, useLocation } from "wouter";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ShoppingBag, Minus, Plus, Trash2, CheckCircle2 } from "lucide-react";
+import { Menu, X, ShoppingBag, Minus, Plus, Trash2, CheckCircle2, Truck, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
+import { useDeliveryZones } from "@/hooks/use-shop-data";
+import { type DeliveryZone } from "@shared/schema";
 import {
   Sheet,
   SheetContent,
@@ -15,6 +17,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const links = [
   { href: "/", label: "الرئيسية" },
@@ -28,6 +38,10 @@ export function Navigation() {
   const { items, itemCount, total, updateQuantity, removeItem, clearCart } = useCart();
   const [isOrdering, setIsOrdering] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showDeliveryModal, setShowDeliveryModal] = useState(false);
+  const [selectedDeliveryType, setSelectedDeliveryType] = useState<"pickup" | "delivery">("pickup");
+  const [selectedZone, setSelectedZone] = useState<DeliveryZone | null>(null);
+  const { data: deliveryZones } = useDeliveryZones();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -35,31 +49,48 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleOrder = () => {
+  const deliveryFee = selectedDeliveryType === "delivery" && selectedZone ? selectedZone.price : 0;
+  const grandTotal = total + deliveryFee;
+
+  const handleStartOrder = () => {
     if (items.length === 0) return;
+    setShowDeliveryModal(true);
+  };
+
+  const handleConfirmOrder = () => {
+    if (selectedDeliveryType === "delivery" && !selectedZone) return;
     
+    setShowDeliveryModal(false);
     setIsOrdering(true);
     
-    // Success animation
     setTimeout(() => {
       setIsOrdering(false);
       setShowSuccess(true);
       
       setTimeout(() => {
-        const phoneNumber = "96181984634";
         const orderText = items
-          .map((item) => `• ${item.name} (${item.quantity}x) - $${((item.price * item.quantity) / 100).toFixed(2)}`)
+          .map((item) => `• ${item.name} (${item.quantity}x) - ${((item.price * item.quantity) / 100).toFixed(2)} د.أ`)
           .join("\n");
+        
+        let deliveryInfo = "";
+        if (selectedDeliveryType === "delivery" && selectedZone) {
+          deliveryInfo = `\n*التوصيل:* ${selectedZone.name} - ${(selectedZone.price / 100).toFixed(2)} د.أ`;
+        } else {
+          deliveryInfo = "\n*الاستلام:* من المحل مباشرة";
+        }
         
         const message = encodeURIComponent(
           `*طلب جديد من مطبخ آدم*\n\n` +
-          `*الطلبات:*\n${orderText}\n\n` +
-          `*المجموع الإجمالي: $${(total / 100).toFixed(2)}*\n\n` +
-          `يرجى تأكيد الطلب وتزويدي بالوقت المتوقع للتوصيل.`
+          `*الطلبات:*\n${orderText}\n` +
+          deliveryInfo + `\n\n` +
+          `*المجموع الإجمالي: ${(grandTotal / 100).toFixed(2)} د.أ*\n\n` +
+          `يرجى تأكيد الطلب وتزويدي بالوقت المتوقع.`
         );
         
         window.open(`https://wa.me/96181984634?text=${message}`, "_blank");
         setShowSuccess(false);
+        setSelectedDeliveryType("pickup");
+        setSelectedZone(null);
         clearCart();
       }, 2000);
     }, 1500);
@@ -211,7 +242,7 @@ export function Navigation() {
                       <Separator />
                       <Button 
                         className="w-full h-14 rounded-xl text-xl font-bold shadow-lg relative overflow-hidden group"
-                        onClick={handleOrder}
+                        onClick={handleStartOrder}
                         disabled={isOrdering || showSuccess}
                       >
                         {isOrdering ? (
@@ -352,7 +383,7 @@ export function Navigation() {
                       <Separator />
                       <Button 
                         className="w-full h-14 rounded-xl text-xl font-bold shadow-lg relative overflow-hidden"
-                        onClick={handleOrder}
+                        onClick={handleStartOrder}
                         disabled={isOrdering || showSuccess}
                       >
                         {isOrdering ? (
@@ -422,6 +453,106 @@ export function Navigation() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <Dialog open={showDeliveryModal} onOpenChange={setShowDeliveryModal}>
+        <DialogContent className="max-w-md" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display flex items-center gap-2">
+              <Truck className="w-6 h-6 text-primary" />
+              اختر طريقة الاستلام
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <RadioGroup 
+              value={selectedDeliveryType} 
+              onValueChange={(v) => {
+                setSelectedDeliveryType(v as "pickup" | "delivery");
+                if (v === "pickup") setSelectedZone(null);
+              }}
+              className="space-y-3"
+            >
+              <div className="flex items-center space-x-3 space-x-reverse p-4 border rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
+                <RadioGroupItem value="pickup" id="pickup" />
+                <Label htmlFor="pickup" className="flex-1 cursor-pointer">
+                  <div className="font-bold text-lg">استلام من المحل</div>
+                  <div className="text-sm text-muted-foreground">مجاني</div>
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-3 space-x-reverse p-4 border rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
+                <RadioGroupItem value="delivery" id="delivery" />
+                <Label htmlFor="delivery" className="flex-1 cursor-pointer">
+                  <div className="font-bold text-lg">توصيل للمنزل</div>
+                  <div className="text-sm text-muted-foreground">اختر منطقتك</div>
+                </Label>
+              </div>
+            </RadioGroup>
+
+            {selectedDeliveryType === "delivery" && (
+              <div className="space-y-3">
+                <div className="text-sm font-medium flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-primary" />
+                  اختر المنطقة:
+                </div>
+                {deliveryZones && deliveryZones.length > 0 ? (
+                  <div className="grid gap-2 max-h-48 overflow-y-auto">
+                    {deliveryZones.map((zone) => (
+                      <button
+                        key={zone.id}
+                        onClick={() => setSelectedZone(zone)}
+                        className={`p-3 rounded-lg border text-right transition-all ${
+                          selectedZone?.id === zone.id 
+                            ? "border-primary bg-primary/10" 
+                            : "hover:border-primary/50 hover:bg-muted/50"
+                        }`}
+                        data-testid={`button-zone-${zone.id}`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">{zone.name}</span>
+                          <span className="text-primary font-bold">{(zone.price / 100).toFixed(2)} د.أ</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-muted-foreground">
+                    لا توجد مناطق توصيل متاحة حالياً
+                  </div>
+                )}
+              </div>
+            )}
+
+            <Separator />
+
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>المجموع الفرعي</span>
+                <span>{(total / 100).toFixed(2)} د.أ</span>
+              </div>
+              {selectedDeliveryType === "delivery" && selectedZone && (
+                <div className="flex justify-between text-sm">
+                  <span>رسوم التوصيل ({selectedZone.name})</span>
+                  <span>{(selectedZone.price / 100).toFixed(2)} د.أ</span>
+                </div>
+              )}
+              <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                <span>المجموع الإجمالي</span>
+                <span className="text-primary">{(grandTotal / 100).toFixed(2)} د.أ</span>
+              </div>
+            </div>
+
+            <Button 
+              className="w-full h-12 text-lg font-bold"
+              onClick={handleConfirmOrder}
+              disabled={selectedDeliveryType === "delivery" && !selectedZone}
+              data-testid="button-confirm-order"
+            >
+              تأكيد الطلب عبر WhatsApp
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </nav>
   );
 }
