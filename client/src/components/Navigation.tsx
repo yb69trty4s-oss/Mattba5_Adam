@@ -70,7 +70,7 @@ export function Navigation() {
     if (selectedDeliveryType === "delivery" && selectedZone) {
       deliveryInfo = `\n*التوصيل:* ${selectedZone.name} - ${(selectedZone.price / 100).toFixed(2)} د.أ\n_سأرسل العنوان التفصيلي هنا_`;
     } else {
-      deliveryInfo = "\n*الاستلام:* من المحل مباشرة\n_سأحدد وقت الاستلام المناسب_";
+      deliveryInfo = "\n*الاستلام:* من المحل مباشرة\n*لاستلام:* وقت الاستلام المناسب والمكان";
     }
     
     const message = encodeURIComponent(
