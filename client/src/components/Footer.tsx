@@ -1,4 +1,4 @@
-import { Instagram, Facebook, Phone, MapPin, Mail } from "lucide-react";
+import { Phone, MapPin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -36,10 +36,6 @@ export function Footer() {
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary" />
                 <span dir="ltr">+961 81 984 634</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-primary" />
-                <span>info@adam-kitchen.com</span>
               </li>
             </ul>
           </div>

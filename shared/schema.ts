@@ -37,6 +37,17 @@ export const insertProductSchema = createInsertSchema(products).omit({ id: true 
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
 
+// Delivery Zones
+export const deliveryZones = pgTable("delivery_zones", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(), // Area name in Arabic
+  price: integer("price").notNull(), // Delivery price in cents
+});
+
+export const insertDeliveryZoneSchema = createInsertSchema(deliveryZones).omit({ id: true });
+export type DeliveryZone = typeof deliveryZones.$inferSelect;
+export type InsertDeliveryZone = z.infer<typeof insertDeliveryZoneSchema>;
+
 // Admin Schemas
 export const updatePriceSchema = z.object({
   price: z.number().min(0),
