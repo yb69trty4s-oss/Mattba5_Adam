@@ -191,9 +191,7 @@ export async function registerRoutes(
   });
 
   // === Seeding ===
-  if (process.env.NODE_ENV !== "production") {
-    await seedDatabase();
-  }
+  await seedDatabase();
 
   return httpServer;
 }
