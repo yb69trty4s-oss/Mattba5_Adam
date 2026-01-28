@@ -36,6 +36,7 @@ export const insertProductSchema = createInsertSchema(products).omit({ id: true 
 
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
+export type InsertProduct = z.infer<typeof insertProductSchema>;
 
 // Delivery Zones
 export const deliveryZones = pgTable("delivery_zones", {

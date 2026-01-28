@@ -5,6 +5,7 @@ import { api } from "@shared/routes";
 import { z } from "zod";
 import path from "path";
 import express from "express";
+import { imagekit } from "./imagekit";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -108,6 +109,80 @@ export async function registerRoutes(
       const deleted = await storage.deleteDeliveryZone(id);
       if (!deleted) {
         return res.status(404).json({ message: "Zone not found" });
+      }
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // === ImageKit Auth ===
+  app.get("/api/imagekit/auth", async (_req, res) => {
+    try {
+      const authParams = imagekit.getAuthenticationParameters();
+      res.json(authParams);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate auth params" });
+    }
+  });
+
+  // === Product CRUD ===
+  app.post("/api/products", async (req, res) => {
+    try {
+      const { name, description, categoryId, price, priceUnit, priceUnitAmount, image, isPopular } = req.body;
+      
+      if (!name || !description || typeof price !== 'number' || !image) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+      
+      const product = await storage.createProduct({
+        name,
+        description,
+        categoryId: categoryId || null,
+        price,
+        priceUnit: priceUnit || "piece",
+        priceUnitAmount: priceUnitAmount || 1,
+        image,
+        isPopular: isPopular || false
+      });
+      res.json(product);
+    } catch (error) {
+      console.error("Error creating product:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.put("/api/products/:id", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const { name, description, categoryId, price, priceUnit, priceUnitAmount, image, isPopular } = req.body;
+      
+      const updateData: any = {};
+      if (name !== undefined) updateData.name = name;
+      if (description !== undefined) updateData.description = description;
+      if (categoryId !== undefined) updateData.categoryId = categoryId;
+      if (price !== undefined) updateData.price = price;
+      if (priceUnit !== undefined) updateData.priceUnit = priceUnit;
+      if (priceUnitAmount !== undefined) updateData.priceUnitAmount = priceUnitAmount;
+      if (image !== undefined) updateData.image = image;
+      if (isPopular !== undefined) updateData.isPopular = isPopular;
+      
+      const updated = await storage.updateProduct(id, updateData);
+      if (!updated) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.delete("/api/products/:id", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const deleted = await storage.deleteProduct(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Product not found" });
       }
       res.json({ success: true });
     } catch (error) {

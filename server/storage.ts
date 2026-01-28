@@ -7,6 +7,7 @@ import {
   type Product,
   type DeliveryZone,
   type InsertDeliveryZone,
+  type InsertProduct,
 } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
@@ -16,6 +17,11 @@ export interface IStorage {
   getProducts(categoryId?: number, isPopular?: boolean): Promise<Product[]>;
   getProduct(id: number): Promise<Product | undefined>;
   updateProductPrice(id: number, price: number, priceUnit?: string, priceUnitAmount?: number): Promise<Product | undefined>;
+  
+  // Product CRUD
+  createProduct(data: InsertProduct): Promise<Product>;
+  updateProduct(id: number, data: Partial<InsertProduct>): Promise<Product | undefined>;
+  deleteProduct(id: number): Promise<boolean>;
   
   // Delivery Zones
   getDeliveryZones(): Promise<DeliveryZone[]>;
@@ -70,6 +76,25 @@ export class DatabaseStorage implements IStorage {
       .where(eq(products.id, id))
       .returning();
     return updated;
+  }
+
+  async createProduct(data: InsertProduct): Promise<Product> {
+    const [product] = await db.insert(products).values(data).returning();
+    return product;
+  }
+
+  async updateProduct(id: number, data: Partial<InsertProduct>): Promise<Product | undefined> {
+    const [updated] = await db
+      .update(products)
+      .set(data)
+      .where(eq(products.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteProduct(id: number): Promise<boolean> {
+    const result = await db.delete(products).where(eq(products.id, id)).returning();
+    return result.length > 0;
   }
 
   async getDeliveryZones(): Promise<DeliveryZone[]> {
