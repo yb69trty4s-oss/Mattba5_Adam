@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Product, priceUnits, priceUnitLabels, type PriceUnit, type DeliveryZone } from "@shared/schema";
+import { Product, priceUnits, priceUnitLabels, type PriceUnit, type DeliveryZone, type Category } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -9,8 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Lock, Trash2, Plus, MapPin } from "lucide-react";
+import { Loader2, Lock, Trash2, Plus, MapPin, Upload, Package, Image as ImageIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 function ProductPriceCard({ 
   product, 
@@ -183,6 +186,19 @@ export default function AdminPanel() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [newZoneName, setNewZoneName] = useState("");
   const [newZonePrice, setNewZonePrice] = useState("");
+  
+  const [newProductName, setNewProductName] = useState("");
+  const [newProductDescription, setNewProductDescription] = useState("");
+  const [newProductPrice, setNewProductPrice] = useState("");
+  const [newProductUnit, setNewProductUnit] = useState<PriceUnit>("piece");
+  const [newProductAmount, setNewProductAmount] = useState("1");
+  const [newProductCategory, setNewProductCategory] = useState<string>("");
+  const [newProductIsPopular, setNewProductIsPopular] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [newProductImage, setNewProductImage] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const { toast } = useToast();
 
   const { data: products, isLoading } = useQuery<Product[]>({
@@ -192,6 +208,11 @@ export default function AdminPanel() {
 
   const { data: deliveryZones, isLoading: isLoadingZones } = useQuery<DeliveryZone[]>({
     queryKey: ["/api/delivery-zones"],
+    enabled: isAuthenticated
+  });
+
+  const { data: categories } = useQuery<Category[]>({
+    queryKey: ["/api/categories"],
     enabled: isAuthenticated
   });
 
@@ -259,6 +280,113 @@ export default function AdminPanel() {
     }
   });
 
+  const createProductMutation = useMutation({
+    mutationFn: async (data: {
+      name: string;
+      description: string;
+      price: number;
+      priceUnit: string;
+      priceUnitAmount: number;
+      categoryId: number | null;
+      image: string;
+      isPopular: boolean;
+    }) => {
+      const res = await apiRequest("POST", "/api/products", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      setNewProductName("");
+      setNewProductDescription("");
+      setNewProductPrice("");
+      setNewProductUnit("piece");
+      setNewProductAmount("1");
+      setNewProductCategory("");
+      setNewProductIsPopular(false);
+      setNewProductImage("");
+      setImagePreview("");
+      toast({ title: "تمت الإضافة", description: "تمت إضافة المنتج بنجاح" });
+    },
+    onError: () => {
+      toast({ variant: "destructive", title: "خطأ", description: "فشل إضافة المنتج" });
+    }
+  });
+
+  const deleteProductMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/products/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      toast({ title: "تم الحذف", description: "تم حذف المنتج" });
+    },
+    onError: () => {
+      toast({ variant: "destructive", title: "خطأ", description: "فشل حذف المنتج" });
+    }
+  });
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    setImagePreview(URL.createObjectURL(file));
+
+    try {
+      const authRes = await fetch("/api/imagekit/auth");
+      const authData = await authRes.json();
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("fileName", file.name);
+      formData.append("publicKey", import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY || "public_4l0/ccnm37/RAa+nVPNSBzyC1Pg=");
+      formData.append("signature", authData.signature);
+      formData.append("expire", authData.expire.toString());
+      formData.append("token", authData.token);
+
+      const uploadRes = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const uploadData = await uploadRes.json();
+      
+      if (uploadData.url) {
+        setNewProductImage(uploadData.url);
+        toast({ title: "تم الرفع", description: "تم رفع الصورة بنجاح" });
+      } else {
+        throw new Error("Upload failed");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({ variant: "destructive", title: "خطأ", description: "فشل رفع الصورة" });
+      setImagePreview("");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleAddProduct = () => {
+    const price = parseFloat(newProductPrice);
+    const amount = parseFloat(newProductAmount);
+    
+    if (!newProductName.trim() || !newProductDescription.trim() || isNaN(price) || price < 0 || !newProductImage) {
+      toast({ variant: "destructive", title: "خطأ", description: "يرجى ملء جميع الحقول المطلوبة" });
+      return;
+    }
+
+    createProductMutation.mutate({
+      name: newProductName.trim(),
+      description: newProductDescription.trim(),
+      price: Math.round(price * 100),
+      priceUnit: newProductUnit,
+      priceUnitAmount: amount || 1,
+      categoryId: newProductCategory ? parseInt(newProductCategory) : null,
+      image: newProductImage,
+      isPopular: newProductIsPopular
+    });
+  };
+
   const handleAddZone = () => {
     const price = parseFloat(newZonePrice);
     if (newZoneName.trim() && !isNaN(price) && price >= 0) {
@@ -317,7 +445,171 @@ export default function AdminPanel() {
       <Navigation />
       <main className="flex-1 container mx-auto px-4 py-32 space-y-12">
         <section>
-          <h1 className="text-4xl font-display font-bold mb-8">إدارة الأسعار</h1>
+          <h2 className="text-3xl font-display font-bold mb-8 flex items-center gap-3">
+            <Package className="w-8 h-8 text-primary" />
+            إضافة منتج جديد
+          </h2>
+
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>منتج جديد</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="product-name">اسم المنتج *</Label>
+                  <Input
+                    id="product-name"
+                    placeholder="اسم المنتج"
+                    value={newProductName}
+                    onChange={(e) => setNewProductName(e.target.value)}
+                    data-testid="input-new-product-name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="product-category">الفئة</Label>
+                  <Select value={newProductCategory} onValueChange={setNewProductCategory}>
+                    <SelectTrigger data-testid="select-new-product-category">
+                      <SelectValue placeholder="اختر الفئة" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id.toString()}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="product-description">وصف المنتج *</Label>
+                <Textarea
+                  id="product-description"
+                  placeholder="وصف المنتج"
+                  value={newProductDescription}
+                  onChange={(e) => setNewProductDescription(e.target.value)}
+                  data-testid="input-new-product-description"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="product-price">السعر (د.أ) *</Label>
+                  <Input
+                    id="product-price"
+                    type="number"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={newProductPrice}
+                    onChange={(e) => setNewProductPrice(e.target.value)}
+                    data-testid="input-new-product-price"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="product-amount">الكمية</Label>
+                  <Input
+                    id="product-amount"
+                    type="number"
+                    step="0.25"
+                    min="0.01"
+                    placeholder="1"
+                    value={newProductAmount}
+                    onChange={(e) => setNewProductAmount(e.target.value)}
+                    data-testid="input-new-product-amount"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>الوحدة</Label>
+                  <Select value={newProductUnit} onValueChange={(v) => setNewProductUnit(v as PriceUnit)}>
+                    <SelectTrigger data-testid="select-new-product-unit">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {priceUnits.map((u) => (
+                        <SelectItem key={u} value={u}>
+                          {priceUnitLabels[u]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>صورة المنتج *</Label>
+                <div className="flex gap-4 items-start">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    data-testid="input-product-image"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    data-testid="button-upload-image"
+                  >
+                    {uploadingImage ? (
+                      <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                    ) : (
+                      <Upload className="w-4 h-4 ml-2" />
+                    )}
+                    {uploadingImage ? "جاري الرفع..." : "رفع صورة"}
+                  </Button>
+                  {imagePreview && (
+                    <div className="relative">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="w-20 h-20 object-cover rounded-md border"
+                      />
+                      {newProductImage && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                          <ImageIcon className="w-2.5 h-2.5 text-white" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="product-popular"
+                  checked={newProductIsPopular}
+                  onCheckedChange={(checked) => setNewProductIsPopular(!!checked)}
+                  data-testid="checkbox-product-popular"
+                />
+                <Label htmlFor="product-popular">منتج شائع</Label>
+              </div>
+
+              <Button
+                onClick={handleAddProduct}
+                disabled={createProductMutation.isPending || uploadingImage || !newProductImage}
+                className="w-full"
+                data-testid="button-add-product"
+              >
+                {createProductMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                ) : (
+                  <Plus className="w-4 h-4 ml-2" />
+                )}
+                إضافة المنتج
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+
+        <Separator />
+
+        <section>
+          <h1 className="text-4xl font-display font-bold mb-8">إدارة المنتجات والأسعار</h1>
           
           {isLoading ? (
             <div className="flex justify-center py-20">
@@ -326,12 +618,23 @@ export default function AdminPanel() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products?.map((product) => (
-                <ProductPriceCard 
-                  key={product.id} 
-                  product={product} 
-                  onUpdate={(data) => mutation.mutate(data)}
-                  isPending={mutation.isPending}
-                />
+                <div key={product.id} className="relative">
+                  <ProductPriceCard 
+                    product={product} 
+                    onUpdate={(data) => mutation.mutate(data)}
+                    isPending={mutation.isPending}
+                  />
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 left-2"
+                    onClick={() => deleteProductMutation.mutate(product.id)}
+                    disabled={deleteProductMutation.isPending}
+                    data-testid={`button-delete-product-${product.id}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
               ))}
             </div>
           )}
